@@ -25,8 +25,8 @@ const App = () => {
 
   
   const handleVoteBtn = () => {
-    copy[selected] += 1
     handleNextBtn()
+    copy[selected] += 1
     if (copy[most] <= copy[selected]) most=selected
   }
 
