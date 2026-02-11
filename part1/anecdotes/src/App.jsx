@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 const votes = [0,0,0,0,0,0,0]
 const copy = [...votes]
+let most = 0
 
 const App = () => {
   const anecdotes = [
@@ -26,15 +27,23 @@ const App = () => {
   const handleVoteBtn = () => {
     copy[selected] += 1
     handleNextBtn()
+    if (copy[most] <= copy[selected]) most=selected
   }
 
   return (
+    <>
     <div>
-      <p>{anecdotes[selected]}</p>
-      <p>has {copy[selected]} votes</p>
-      <button onClick={handleVoteBtn}>vote</button>
-      <button onClick={handleNextBtn}>Next anecdote</button>
-    </div>
+        <h1>Anecdote of the day</h1>
+        <p>{anecdotes[selected]}</p>
+        <p>has {copy[selected]} votes</p>
+        <button onClick={handleVoteBtn}>vote</button>
+        <button onClick={handleNextBtn}>Next anecdote</button>
+      </div>
+      <div>
+        <h1>Anecdote with most votes</h1>
+        <p>{anecdotes[most]}</p>
+      </div>
+    </>
   )
 }
 
