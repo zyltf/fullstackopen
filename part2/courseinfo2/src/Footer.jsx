@@ -1,7 +1,7 @@
 const Footer = ({total}) => {
     return (
         <>
-            <p>total of {total} exercises</p>
+            <p><b>total of {total} exercises</b></p>
         </>
     )
 }
