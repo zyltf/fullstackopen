@@ -12,7 +12,7 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
   const [showAll, setShowAll] = useState(true)
 
-  const hook = () => {
+  const fetchPersons = () => {
     console.log('effect')
     axios
       .get('http://localhost:3001/persons')
@@ -20,10 +20,28 @@ const App = () => {
         console.log("promise fulfilled")
         setPersons(response.data)
       }
-
       )
   }
-  useEffect(hook, [])
+  useEffect(fetchPersons, [])
+
+  const addPerson = () => {
+    const personObject = {name: newName, number: newNumber}
+    axios
+      .post('http://localhost:3001/persons', personObject)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+      })
+  }
+
+  const deletePerson = (id) => {
+    if(confirm("Are you sure you want to delete this person?")) {
+    const url = `http://localhost:3001/persons/${id}`
+
+      axios.delete(url).then(response => {
+        setPersons(persons.filter(person => person.id !== id))
+      })
+    }
+  }
 
   const personsToShow = showAll 
   ? persons 
@@ -42,13 +60,11 @@ const App = () => {
     setShowAll(false)
   }
 
-  const personObject = {name: newName, number: newNumber}
-
   const submitBtn = () => {
     event.preventDefault()
-    persons.some(person => person.name === personObject.name) 
+    persons.some(person => person.name === newName) 
     ? alert(`${newName} is already added to phonebook`)
-    : setPersons(persons.concat(personObject))
+    : addPerson()
     setNewName('')
     setNewNumber('')
   }
@@ -61,7 +77,7 @@ const App = () => {
       <PersonForm newName={newName} newNumber={newNumber} 
         handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} submitBtn= {submitBtn}/>
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
+      <Persons personsToShow={personsToShow} deletePerson={deletePerson}/>
     </div>
   )
 }
