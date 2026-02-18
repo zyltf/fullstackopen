@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './Filter'
 import PersonForm from './PersonForm'
 import Persons from './Persons'
+import {getAll, createPerson, deleteOp} from './Ops'
 
 const App = () => {
 
@@ -13,33 +13,24 @@ const App = () => {
   const [showAll, setShowAll] = useState(true)
 
   const fetchPersons = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log("promise fulfilled")
-        setPersons(response.data)
-      }
-      )
+    getAll()
+      .then(data => setPersons(data))
+      .then(() => console.log("promise fulfilled <fetchPersons>"))
   }
   useEffect(fetchPersons, [])
 
   const addPerson = () => {
     const personObject = {name: newName, number: newNumber}
-    axios
-      .post('http://localhost:3001/persons', personObject)
-      .then(response => {
-        setPersons(persons.concat(response.data))
-      })
+    createPerson(personObject)
+      .then(data => setPersons(persons.concat(data)))
+      .then(() => console.log("promise fulfilled <addPerson>"))
   }
 
   const deletePerson = (id) => {
     if(confirm("Are you sure you want to delete this person?")) {
-    const url = `http://localhost:3001/persons/${id}`
-
-      axios.delete(url).then(response => {
-        setPersons(persons.filter(person => person.id !== id))
-      })
+      deleteOp(id)
+      .then(response => setPersons(persons.filter(person => person.id !== id)))
+      .then(() => console.log("promise fulfilled <deletePerson>"))
     }
   }
 
@@ -60,7 +51,7 @@ const App = () => {
     setShowAll(false)
   }
 
-  const submitBtn = () => {
+  const submitBtn = (event) => {
     event.preventDefault()
     persons.some(person => person.name === newName) 
     ? alert(`${newName} is already added to phonebook`)
