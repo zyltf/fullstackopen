@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Filter from './Filter'
 import PersonForm from './PersonForm'
 import Persons from './Persons'
-import {getAll, createPerson, deleteOp} from './Ops'
+import {getAll, createPerson, deleteOp, update} from './Ops'
 
 const App = () => {
 
@@ -21,9 +21,18 @@ const App = () => {
 
   const addPerson = () => {
     const personObject = {name: newName, number: newNumber}
-    createPerson(personObject)
-      .then(data => setPersons(persons.concat(data)))
-      .then(() => console.log("promise fulfilled <addPerson>"))
+    const exist = persons.filter(person => person.name === newName)
+    if(exist){
+      confirm(`${newName} is already added to phonebook, replace the old number with a new one`)
+      ? update(exist[0].id, personObject)
+        .then(data => 
+          setPersons(persons.map(person => person.id == exist[0].id ? data : person)))
+      : console.log("not updated")
+    } else {
+      createPerson(personObject)
+        .then(data => setPersons(persons.concat(data)))
+        .then(() => console.log("promise fulfilled <addPerson>")) 
+    }
   }
 
   const deletePerson = (id) => {
@@ -53,9 +62,7 @@ const App = () => {
 
   const submitBtn = (event) => {
     event.preventDefault()
-    persons.some(person => person.name === newName) 
-    ? alert(`${newName} is already added to phonebook`)
-    : addPerson()
+    addPerson()
     setNewName('')
     setNewNumber('')
   }

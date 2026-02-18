@@ -14,4 +14,4 @@ const deleteOp = id =>
 const update = (id, newObject) =>
     axios.put(`${baseUrl}/${id}`, newObject).then(res => res.data)
 
-export { getAll, createPerson, deleteOp }
+export { getAll, createPerson, deleteOp, update}
